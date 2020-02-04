@@ -45,24 +45,94 @@ Nginx+uWSGI+Django
 [react + django 实现前后端分离 ](https://www.jianshu.com/p/e9bc8b819075)
 
 
-## 视图层  --明天继续
+## 视图层
 #### 基础
 #### 参考
 #### 文件上传
 #### 基于类的试图
 #### 高级
 #### 中间件
+1.在实际设置url时,去除URLconf中的冗余.举例:<br>
+```
+urlpatterns = [
+    path('<page_slug>-<page_id>/history/',     views.history),
+    path('<page_slug>-<page_id>/edit/',        views.edit),
+    path('<page_slug>-<page_id>/discuss/',     views.discuss),
+    path('<page_slug>-<page_id>/permissions/', views.permissions),
+]
+```
+优化后为:
+```
+urlpatterns = [
+    path('<page_slug>-<page_id>/', include([
+        path('history/',     views.history),
+        path('edit/',        views.edit),
+        path('discuss/',     views.discuss),
+        path('permissions/', views.permissions),
+    ])),
+]
+```
+
 
 ## 模板层
 #### 基础
 #### 对于设计者
 #### 针对程序员
+模板中常见可用后端:DjangoTemplates\Jinja2。
+在实际开发中我们需要掌握 [模板用法](https://docs.djangoproject.com/zh-hans/3.0/topics/templates/)
+
 
 ## 表单
 #### 基础
 #### 进阶
+小部件widgets的常用总结:
+```
+1)单radio，值为字符串
+	user = fields.CharField(
+		initial=2,
+		widget=widgets.RadioSelect(choices=((1,'上海'),(2,'北京'),))
+	)
+  
+	user = fields.ChoiceField(
+		choices=((1, '上海'), (2, '北京'),),
+		initial=2,
+		widget=widgets.RadioSelect
+	)
+  
+2)单select，值为字符串
+	user = fields.CharField(
+		initial=2,
+		widget=widgets.Select(choices=((1,'上海'),(2,'北京'),))
+	)
+  
+	user = fields.ChoiceField(
+		choices=((1, '上海'), (2, '北京'),),
+		initial=2,
+		widget=widgets.Select
+	)
+  
+3)多选select，值为列表
+	user = fields.MultipleChoiceField(
+		choices=((1,'上海'),(2,'北京'),),
+		initial=[1,],
+		widget=widgets.SelectMultiple
+	)
+   
+4)单checkbox
+	user = fields.CharField(
+		widget=widgets.CheckboxInput()
+	)
+   
+5)多选checkbox,值为列表
+	user = fields.MultipleChoiceField(
+		initial=[2, ],
+		choices=((1, '上海'), (2, '北京'),),
+		widget=widgets.CheckboxSelectMultiple
+	)
+```
 
-## 开发进程
+
+## 开发进程  ----明天继续
 #### 设置
 #### 应用程序
 #### 异常
