@@ -132,20 +132,81 @@ urlpatterns = [
 ```
 
 
-## 开发进程  ----明天继续
+## 开发进程
 #### 设置
 #### 应用程序
 #### 异常
 #### django-admin.py和manage.py
 #### 测试
 #### Deployment
+1.django-admin 工具(我自己喜欢用 python manage.py...来,所以这里单独列出一下)
+```
+#Unix Bash shell
+export DJANGO_SETTINGS_MODULE=mysite.settings
+	
+#Windows shell
+set DJANGO_SETTINGS_MODULE=mysite.settings
+
+#使用 --settings 命令行参数指定配置模块路径
+django-admin runserver --settings=mysite.settings
+```
+
+2.服务器端(mode_wsgi)(之前一直都是在自己的开发环境上,后面上生产环境要用)
+```
+在服务器环境下,要通知WSGI应用当前使用的是哪个配置文件,用到os.environ:
+import os
+os.environ['DJANGO_SETTINGS_MODULE']='mysite.settings'
+```
+
 
 ## 管理
 #### 管理站点
 #### 管理动作
 #### 管理文档生成器
+```
+1.在admin.py中注册自己的model
+	admin.site.register(类名)
 
-## 安全
+2.在admin.py中写入对站点自定义管理类,举例如下:
+	#Register your models here.
+
+	class HumenInfo(admin.TabularInline):
+		#指定model
+		model = Humen
+		#指定增加的条数
+		extra = 2
+
+	class PlayerAdmin(admin.ModelAdmin):
+	
+		def get_rate_level(self):
+			if self.rate > 9:
+				return "玩"
+			else:
+				return "不玩"
+		get_rate_level.short_description = "评价"
+	
+		#显示
+		list_display = ['name', 'rate', 'desc', get_rate_level]
+		#过滤器
+		list_filter = ['rate', 'desc']
+		#搜索
+		search_fields = ['name']
+		#分页
+		list_per_page = 1
+		#信息分组
+		fieldsets = [
+			("基本信息", {"fields": ("name", "desc")}),
+			("附加信息", {"fields": ("rate",)})
+		]
+		inlines = [HumenInfo]
+ 
+	#注册你的model
+	admin.site.register(Player, PlayerAdmin)
+	admin.site.register(Humen)		
+```
+
+
+## 安全	  ----明天继续
 #### 安全概览
 #### 在django中披露的安全问题
 #### 点击劫持保护
